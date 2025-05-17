@@ -4,20 +4,16 @@ import { useState, useEffect, type FormEvent } from "react"
 import { Rocket, Pencil, Trash2, Check, X } from "lucide-react"
 import "./App.css"
 
-// Definindo a interface para o modelo Todo
 interface Todo {
   id: number
   title: string
-  description?: string
   completed: boolean
   createdAt: string
   updatedAt: string
 }
 
-// Interface para o formulário de edição
 interface EditFormData {
   title: string
-  description: string
 }
 
 function App() {
@@ -25,10 +21,9 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [newTaskTitle, setNewTaskTitle] = useState<string>("")
-  const [newTaskDescription, setNewTaskDescription] = useState<string>("")
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "completed">("all")
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null)
-  const [editFormData, setEditFormData] = useState<EditFormData>({ title: "", description: "" })
+  const [editFormData, setEditFormData] = useState<EditFormData>({ title: "" })
 
   useEffect(() => {
     fetchTodos()
@@ -65,7 +60,6 @@ function App() {
         },
         body: JSON.stringify({
           title: newTaskTitle,
-          description: newTaskDescription.trim() || undefined,
           completed: false,
         }),
       })
@@ -77,7 +71,6 @@ function App() {
       const newTodo: Todo = await response.json()
       setTodos([...todos, newTodo])
       setNewTaskTitle("")
-      setNewTaskDescription("")
     } catch (err) {
       setError(`Erro ao adicionar tarefa: ${err instanceof Error ? err.message : "Erro desconhecido"}`)
       console.error("Erro ao adicionar tarefa:", err)
@@ -127,13 +120,12 @@ function App() {
     setEditingTodoId(todo.id)
     setEditFormData({
       title: todo.title,
-      description: todo.description || "",
     })
   }
 
   const cancelEditing = (): void => {
     setEditingTodoId(null)
-    setEditFormData({ title: "", description: "" })
+    setEditFormData({ title: "" })
   }
 
   const updateTodo = async (id: number): Promise<void> => {
@@ -147,7 +139,6 @@ function App() {
         },
         body: JSON.stringify({
           title: editFormData.title,
-          description: editFormData.description.trim() || undefined,
         }),
       })
 
@@ -164,10 +155,10 @@ function App() {
     }
   }
 
-  const handleEditFormChange = (field: keyof EditFormData, value: string): void => {
+  const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEditFormData({
       ...editFormData,
-      [field]: value,
+      title: e.target.value,
     })
   }
 
@@ -191,22 +182,13 @@ function App() {
 
       <main>
         <form className="new-task-form" onSubmit={addTodo}>
-          <div className="form-fields">
-            <input
-              type="text"
-              placeholder="Adicione uma nova tarefa"
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              className="title-input"
-            />
-            <textarea
-              placeholder="Descrição (opcional)"
-              value={newTaskDescription}
-              onChange={(e) => setNewTaskDescription(e.target.value)}
-              className="description-input"
-              rows={3}
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Adicione uma nova tarefa"
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            className="title-input"
+          />
           <button type="submit" className="create-button">
             Criar
             <span className="plus-icon">+</span>
@@ -254,20 +236,12 @@ function App() {
                   <li key={todo.id} className={`todo-item ${todo.completed ? "completed" : ""}`}>
                     {editingTodoId === todo.id ? (
                       <div className="edit-form">
-                        <div className="edit-fields">
-                          <input
-                            type="text"
-                            value={editFormData.title}
-                            onChange={(e) => handleEditFormChange("title", e.target.value)}
-                            className="edit-title-input"
-                          />
-                          <textarea
-                            value={editFormData.description}
-                            onChange={(e) => handleEditFormChange("description", e.target.value)}
-                            className="edit-description-input"
-                            rows={2}
-                          />
-                        </div>
+                        <input
+                          type="text"
+                          value={editFormData.title}
+                          onChange={handleEditFormChange}
+                          className="edit-title-input"
+                        />
                         <div className="edit-actions">
                           <button
                             className="save-btn"
@@ -292,7 +266,6 @@ function App() {
                         </button>
                         <div className="todo-content">
                           <p className="todo-title">{todo.title}</p>
-                          {todo.description && <p className="todo-description">{todo.description}</p>}
                         </div>
                         <div className="todo-actions">
                           <button
