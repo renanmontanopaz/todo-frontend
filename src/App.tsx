@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, type FormEvent } from "react"
 import { Rocket, Pencil, Trash2, Check, X } from "lucide-react"
 import "./App.css"
@@ -32,7 +30,7 @@ function App() {
   const fetchTodos = async (): Promise<void> => {
     setIsLoading(true)
     try {
-      const response = await fetch("http://localhost:8080/todos")
+      const response = await fetch("/todos")
       if (!response.ok) {
         throw new Error("Falha ao buscar tarefas")
       }
@@ -53,7 +51,7 @@ function App() {
     if (!newTaskTitle.trim()) return
 
     try {
-      const response = await fetch("http://localhost:8080/todos", {
+      const response = await fetch("/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +77,7 @@ function App() {
 
   const toggleTodoStatus = async (id: number, completed: boolean): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      const response = await fetch(`/todos/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +99,7 @@ function App() {
 
   const deleteTodo = async (id: number): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      const response = await fetch(`/todos/${id}`, {
         method: "DELETE",
       })
 
@@ -132,7 +130,7 @@ function App() {
     if (!editFormData.title.trim()) return
 
     try {
-      const response = await fetch(`http://localhost:8080/todos/${id}`, {
+      const response = await fetch(`/todos/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -172,128 +170,128 @@ function App() {
   const totalCount = todos.length
 
   return (
-    <div className="app-container">
-      <header>
-        <div className="logo">
-          <Rocket className="rocket-icon" size={24} />
-          <h1>todo</h1>
-        </div>
-      </header>
+      <div className="app-container">
+        <header>
+          <div className="logo">
+            <Rocket className="rocket-icon" size={24} />
+            <h1>todo</h1>
+          </div>
+        </header>
 
-      <main>
-        <form className="new-task-form" onSubmit={addTodo}>
-          <input
-            type="text"
-            placeholder="Adicione uma nova tarefa"
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-            className="title-input"
-          />
-          <button type="submit" className="create-button">
-            Criar
-            <span className="plus-icon">+</span>
-          </button>
-        </form>
+        <main>
+          <form className="new-task-form" onSubmit={addTodo}>
+            <input
+                type="text"
+                placeholder="Adicione uma nova tarefa"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                className="title-input"
+            />
+            <button type="submit" className="create-button">
+              Criar
+              <span className="plus-icon">+</span>
+            </button>
+          </form>
 
-        {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message">{error}</div>}
 
-        {isLoading ? (
-          <div className="loading">Carregando tarefas...</div>
-        ) : (
-          <>
-            <div className="task-info">
-              <div className="created-tasks">
-                Tarefas criadas <span className="counter">{totalCount}</span>
-              </div>
-              <div className="completed-tasks">
-                Concluídas{" "}
-                <span className="counter">
+          {isLoading ? (
+              <div className="loading">Carregando tarefas...</div>
+          ) : (
+              <>
+                <div className="task-info">
+                  <div className="created-tasks">
+                    Tarefas criadas <span className="counter">{totalCount}</span>
+                  </div>
+                  <div className="completed-tasks">
+                    Concluídas{" "}
+                    <span className="counter">
                   {completedCount} de {totalCount}
                 </span>
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            <div className="filter-tabs">
-              <button className={activeFilter === "all" ? "active" : ""} onClick={() => setActiveFilter("all")}>
-                Todas
-              </button>
-              <button className={activeFilter === "active" ? "active" : ""} onClick={() => setActiveFilter("active")}>
-                Pendentes
-              </button>
-              <button
-                className={activeFilter === "completed" ? "active" : ""}
-                onClick={() => setActiveFilter("completed")}
-              >
-                Concluídas
-              </button>
-            </div>
+                <div className="filter-tabs">
+                  <button className={activeFilter === "all" ? "active" : ""} onClick={() => setActiveFilter("all")}>
+                    Todas
+                  </button>
+                  <button className={activeFilter === "active" ? "active" : ""} onClick={() => setActiveFilter("active")}>
+                    Pendentes
+                  </button>
+                  <button
+                      className={activeFilter === "completed" ? "active" : ""}
+                      onClick={() => setActiveFilter("completed")}
+                  >
+                    Concluídas
+                  </button>
+                </div>
 
-            <ul className="todo-list">
-              {filteredTodos.length === 0 ? (
-                <li className="empty-list">Nenhuma tarefa encontrada.</li>
-              ) : (
-                filteredTodos.map((todo) => (
-                  <li key={todo.id} className={`todo-item ${todo.completed ? "completed" : ""}`}>
-                    {editingTodoId === todo.id ? (
-                      <div className="edit-form">
-                        <input
-                          type="text"
-                          value={editFormData.title}
-                          onChange={handleEditFormChange}
-                          className="edit-title-input"
-                        />
-                        <div className="edit-actions">
-                          <button
-                            className="save-btn"
-                            onClick={() => updateTodo(todo.id)}
-                            aria-label="Salvar alterações"
-                          >
-                            <Check size={18} />
-                          </button>
-                          <button className="cancel-btn" onClick={cancelEditing} aria-label="Cancelar edição">
-                            <X size={18} />
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <button
-                          className={`checkbox ${todo.completed ? "checked" : ""}`}
-                          onClick={() => toggleTodoStatus(todo.id, !todo.completed)}
-                          aria-label={todo.completed ? "Marcar como não concluída" : "Marcar como concluída"}
-                        >
-                          {todo.completed && <span className="check">✓</span>}
-                        </button>
-                        <div className="todo-content">
-                          <p className="todo-title">{todo.title}</p>
-                        </div>
-                        <div className="todo-actions">
-                          <button
-                            className="edit-btn"
-                            onClick={() => startEditing(todo)}
-                            aria-label="Editar tarefa"
-                            disabled={todo.completed}
-                          >
-                            <Pencil size={18} />
-                          </button>
-                          <button
-                            className="delete-btn"
-                            onClick={() => deleteTodo(todo.id)}
-                            aria-label="Excluir tarefa"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </li>
-                ))
-              )}
-            </ul>
-          </>
-        )}
-      </main>
-    </div>
+                <ul className="todo-list">
+                  {filteredTodos.length === 0 ? (
+                      <li className="empty-list">Nenhuma tarefa encontrada.</li>
+                  ) : (
+                      filteredTodos.map((todo) => (
+                          <li key={todo.id} className={`todo-item ${todo.completed ? "completed" : ""}`}>
+                            {editingTodoId === todo.id ? (
+                                <div className="edit-form">
+                                  <input
+                                      type="text"
+                                      value={editFormData.title}
+                                      onChange={handleEditFormChange}
+                                      className="edit-title-input"
+                                  />
+                                  <div className="edit-actions">
+                                    <button
+                                        className="save-btn"
+                                        onClick={() => updateTodo(todo.id)}
+                                        aria-label="Salvar alterações"
+                                    >
+                                      <Check size={18} />
+                                    </button>
+                                    <button className="cancel-btn" onClick={cancelEditing} aria-label="Cancelar edição">
+                                      <X size={18} />
+                                    </button>
+                                  </div>
+                                </div>
+                            ) : (
+                                <>
+                                  <button
+                                      className={`checkbox ${todo.completed ? "checked" : ""}`}
+                                      onClick={() => toggleTodoStatus(todo.id, !todo.completed)}
+                                      aria-label={todo.completed ? "Marcar como não concluída" : "Marcar como concluída"}
+                                  >
+                                    {todo.completed && <span className="check">✓</span>}
+                                  </button>
+                                  <div className="todo-content">
+                                    <p className="todo-title">{todo.title}</p>
+                                  </div>
+                                  <div className="todo-actions">
+                                    <button
+                                        className="edit-btn"
+                                        onClick={() => startEditing(todo)}
+                                        aria-label="Editar tarefa"
+                                        disabled={todo.completed}
+                                    >
+                                      <Pencil size={18} />
+                                    </button>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => deleteTodo(todo.id)}
+                                        aria-label="Excluir tarefa"
+                                    >
+                                      <Trash2 size={18} />
+                                    </button>
+                                  </div>
+                                </>
+                            )}
+                          </li>
+                      ))
+                  )}
+                </ul>
+              </>
+          )}
+        </main>
+      </div>
   )
 }
 
