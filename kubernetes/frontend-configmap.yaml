@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: approval
+data:
+  API_URL: "http://api-service.approval.svc.cluster.local"
