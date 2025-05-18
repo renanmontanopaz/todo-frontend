@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
-  namespace: approval
+  namespace: production
   labels:
     app: frontend
 spec:
@@ -22,7 +22,7 @@ spec:
             - containerPort: 80
           env:
             - name: API_URL
-              value: "http://api-service.approval.svc.cluster.local"
+              value: "http://api-service.production.svc.cluster.local"
           resources:
             limits:
               cpu: "300m"
