@@ -31,10 +31,7 @@ COPY --from=builder /app/public/env-config.js .
 COPY nginx.conf /etc/nginx/conf.d/
 
 # Script para substituir a variável de ambiente no runtime
-RUN echo '#!/bin/sh \n\
-sed -i "s|__API_URL__|$API_URL|g" /usr/share/nginx/html/env-config.js \n\
-exec nginx -g "daemon off;"' > /docker-entrypoint.sh
-
+COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
