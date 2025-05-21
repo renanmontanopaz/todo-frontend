@@ -174,7 +174,7 @@ function App() {
         <header>
           <div className="logo">
             <Rocket className="rocket-icon" size={24} />
-            <h1>todo</h1>
+            <h1>todo!</h1>
           </div>
         </header>
 
