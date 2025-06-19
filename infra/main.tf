@@ -1,10 +1,3 @@
-terraform {
-  backend "gcs" {
-    bucket = "[NOME-UNICO-PARA-SEU-BUCKET]" # Use o mesmo nome do bucket que você já criou
-    prefix = "infra/terraform.tfstate"
-  }
-}
-
 provider "google" {
   project = "meu-projeto-stage" # Substitua se necessário
   region  = "us-central1"
