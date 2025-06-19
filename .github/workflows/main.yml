@@ -100,4 +100,8 @@ jobs:
         run: |
           kubectl apply -f kubernetes/frontend-deployment.yaml
           kubectl apply -f kubernetes/frontend-service.yaml
+          kubectl apply -f kubernetes/postgres-pvc.yaml -n production
+          kubectl apply -f kubernetes/postgres-secrets.yaml -n production
+          kubectl apply -f kubernetes/postgres-deployment.yaml -n production
+          kubectl apply -f kubernetes/postgres-service.yaml -n production
           kubectl rollout restart deployment frontend-deployment -n production
