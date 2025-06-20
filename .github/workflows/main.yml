@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID_PROD }}
-  GKE_CLUSTER: 'autopilot-cluster-stage' # Nome definido no seu arquivo terraform (infra/main.tf)
+  GKE_CLUSTER: 'gke-standard-cluster' # Nome definido no seu arquivo terraform (infra/main.tf)
   GKE_LOCATION: 'us-central1'         # Localização definida no seu arquivo terraform (infra/main.tf)
   IMAGE: frontend-react                # Nome da imagem Docker para o frontend
 
