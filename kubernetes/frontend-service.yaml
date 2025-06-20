@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: frontend-service
   namespace: production
+  annotations:
+    prometheus.io/scrape: 'true'   # Habilita a coleta
+    prometheus.io/port: '80'
 spec:
   selector:
     app: frontend
