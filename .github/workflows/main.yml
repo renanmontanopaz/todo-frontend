@@ -17,6 +17,7 @@ permissions:
   id-token: write # Permissão necessária para autenticação segura no GCP
 
 jobs:
+  #subindo frontend
   # --- JOB 1: GARANTE QUE A INFRAESTRUTURA E CONFIGS K8S ESTEJAM ATUALIZADAS ---
 #  provision-infrastructure:
 #    name: Provision GKE Cluster & K8s Config
